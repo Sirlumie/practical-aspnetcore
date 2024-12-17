@@ -4,14 +4,20 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo 'Checking out source code...'
-                checkout scm
+                echo 'Checking out branch net8.0...'
+                // Use Git to explicitly checkout the 'net8.0' branch
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/net8.0']],
+                    userRemoteConfigs: [[url: 'https://github.com/Sirlumie/practical-aspnetcore.git']]
+                ])
             }
         }
 
         stage('Restore Dependencies') {
             steps {
                 echo 'Restoring dependencies...'
+                // Ensure to restore using the correct solution file
                 sh 'dotnet restore projects/net9/open-api-3.sln'
             }
         }
@@ -19,15 +25,15 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the project...'
+                // Build the solution file
                 sh 'dotnet build projects/net9/open-api-3.sln --configuration Release --no-restore'
             }
         }
-
     }
 
     post {
         success {
-            echo 'Build, Test, Dockerize, and Deployment succeeded!'
+            echo 'Build succeeded!'
         }
         failure {
             echo 'Pipeline failed. Check logs for errors.'
