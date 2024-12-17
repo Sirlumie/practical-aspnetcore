@@ -9,8 +9,10 @@ pipeline {
                 checkout([
                     $class: 'GitSCM',
                     branches: [[name: '*/net8.0']],
-                    userRemoteConfigs: [[url: 'https://github.com/Sirlumie/practical-aspnetcore.git']]
+                    userRemoteConfigs: [[url: 'https://github.com/Sirlumie/practical-aspnetcore.git']],
+                    extensions: [[$class: 'CloneOption', depth: 1, noTags: true, shallow: true]]
                 ])
+
             }
         }
 
